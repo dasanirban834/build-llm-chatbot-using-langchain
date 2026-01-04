@@ -1,0 +1,63 @@
+default:
+  tags:
+    - anirban
+
+variables:
+  DOCKER_DRIVER: overlay2
+  DOCKER_TLS_CERTDIR: ""
+  URL: 669122243705.dkr.ecr.us-east-1.amazonaws.com/
+  REPO: streamlit-chatbot
+  TAG: v1
+
+stages:
+  - Image_Build
+  - Resources_Build
+
+Image Build:
+  stage: Image_Build
+  image: docker:latest
+  services:
+    - docker:dind
+  script:
+    - echo "~~~~~~~~~~~~~~~~~~~~~~~~Build ECR Repo and Push the Docker Image ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+    - terraform -chdir=Terraform init
+    - terraform -chdir=Terraform plan -target=aws_ecr_repository.aws-ecr
+    - terraform -chdir=Terraform apply -target=aws_ecr_repository.aws-ecr -auto-approve
+
+    - echo '~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ Validate if the docker image exists ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~'
+    - |
+      if ! sudo docker images | awk '{print $1}' | grep $URL$REPO; then
+        echo "Docker image not found."
+        echo "~~~~~~~~~~~~~~~~~~~~~~~~Building Docker Image~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        sudo docker build -t streamlit-chatbot-app:latest .
+        sleep 60
+        echo "~~~~~~~~~~~~~~~~~~~~~~~~Logging in to AWS ECR~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        sudo aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $URL
+        echo "~~~~~~~~~~~~~~~~~~~~~~~~Pushing image to AWS ECR~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+        sudo docker tag streamlit-chatbot-app:latest $URL$REPO:$TAG
+        sudo docker push $URL$REPO:$TAG
+      else
+        echo "~~~~~~~~~~~~~~~~~~~~~~~~Docker image already exists~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~"
+      fi
+  artifacts:
+      paths:
+        - Terraform/.terraform/
+        - Terraform/terraform.tfstate*
+      expire_in: 1 hour
+
+  except:
+    changes:
+      - README.md
+
+
+Resource Build:
+  stage: Resources_Build
+  script:
+    - terraform -chdir=Terraform init
+    - terraform -chdir=Terraform plan
+    - terraform -chdir=Terraform apply -auto-approve
+  dependencies:
+    - Image Build
+  except:
+    changes:
+      - README.md
