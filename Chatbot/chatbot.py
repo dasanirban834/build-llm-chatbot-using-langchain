@@ -1,17 +1,12 @@
 import boto3
 import streamlit as st
 from bedrock_model import bedrock_model_logic
-from app_feature import apply_sidebar
 
 
 ## Set page configuration
 st.set_page_config(page_title="Chatbot", page_icon="img.png", layout="wide")
 
 def app():
-
-    ## Sidebar Settings:
-    apply_sidebar()
-
     ## Title
     st.title(":rainbow[🦜Langchain ChatBot🦜]")
 
@@ -29,10 +24,10 @@ def app():
     with st.sidebar:
         st.title('Settings')
         model_id = st.selectbox("### 📈 Select Model", model_list)
-        temperature = st.slider("### 🔥 Temperature", min_value=0.0, max_value=1.0, value=0.7, step=0.1, help="Higher = more creative output | Lower = more factual")
-        max_tokens = st.slider("### 🧩 Max Tokens", min_value=100, max_value=2048, value=1024, step=100)
+        temperature = st.slider("### 🔥 Temperature", min_value=0.0, max_value=1.0, value=0.7, step=0.1, help="Controls how random a model can respond")
+        max_tokens = st.slider("### 🧩 Max Tokens", min_value=100, max_value=2048, value=1024, step=100, help='Controls how long a model can respond')
         
-        if st.button("New Message", type="primary"):
+        if st.button("New Message", type="primary", use_container_width=True):
             st.session_state.messages = []
             st.rerun()
 

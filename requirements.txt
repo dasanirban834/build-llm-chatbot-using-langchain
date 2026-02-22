@@ -4,3 +4,8 @@ langchain_community
 langchain_aws
 langchain_core
 streamlit
+opensearch-py
+pypdf
+unstructured[pdf]
+unstructured[docx]
+requests_aws4auth

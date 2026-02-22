@@ -1,0 +1,20 @@
+# .streamlit/config.toml
+[theme]
+base = "dark"
+font = "serif"
+baseFontSize=15
+primaryColor = "forestGreen"
+backgroundColor = "#141415"
+codeBackgroundColor = "#1e2026" # Near-black navy
+textColor="#74e6f0"
+baseRadius="full"
+
+[theme.sidebar]
+backgroundColor = "#0F172A"   # Deep Navy
+secondaryBackgroundColor = "#1E293B"  # Slate Dark
+primaryColor = "#0795ed"      # Neon Sky Blue
+textColor = "#f5f2f4"        # Soft white (easy on eyes)
+codeTextColor = "#994780"        # Soft light gray
+codeBackgroundColor = "#020617" # Near-black navy
+baseRadius = "50px"
+buttonRadius = "100px"

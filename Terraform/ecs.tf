@@ -20,7 +20,7 @@ resource "aws_ecs_task_definition" "taskdef" {
   container_definitions = jsonencode([
     {
       "name" : "${var.ecs_task_def["cont_name"]}",
-      "image" : "${aws_ecr_repository.aws-ecr.repository_url}:v1",
+      "image" : "${aws_ecr_repository.aws-ecr.repository_url}:v3",
       "entrypoint" : [],
       "essential" : "${var.ecs_task_def["essential"]}",
       "logConfiguration" : {
