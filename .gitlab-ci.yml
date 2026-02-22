@@ -5,7 +5,7 @@ default:
 variables:
   DOCKER_DRIVER: overlay2
   DOCKER_TLS_CERTDIR: ""
-  URL: 669122243705.dkr.ecr.us-east-1.amazonaws.com/
+  URL: <account-id>.dkr.ecr.us-east-1.amazonaws.com/
   REPO: streamlit-chatbot
   TAG: v1
 
@@ -60,4 +60,5 @@ Resource Build:
     - Image Build
   except:
     changes:
+
       - README.md
